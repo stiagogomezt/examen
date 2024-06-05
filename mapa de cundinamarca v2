@@ -44,3 +44,37 @@ df_resultado_final = gdf_municipios.merge(df_poblacion_municipios, left_on='munn
 
 
 df_resultado_final.head()
+## este es el resultado del merge y se tiene una base de datos adecuada para generar la grafica del mapa coropletico 
+df_resultado_final = df_resultado_final.drop(columns=['cod_municipio'])
+
+
+df_resultado_final.head()
+import matplotlib.pyplot as plt
+import contextily as ctx
+
+fig, ax = plt.subplots(figsize=(10, 10))
+
+# Graficar los datos
+df_resultado_final.plot(column='pob_km', ax=ax, cmap='OrRd', edgecolor='black')
+
+# Añadir el mapa base
+ctx.add_basemap(ax, crs=df_resultado_final.crs, zoom=10)
+
+# Título y etiquetas de los ejes
+ax.set_title('Mapa de Población en Municipios de Cundinamarca', fontsize=16)
+ax.set_xlabel('Longitud', fontsize=15)
+ax.set_ylabel('Latitud', fontsize=15)
+
+# Barra de color
+sm = plt.cm.ScalarMappable(cmap='OrRd', norm=plt.Normalize(vmin=df_resultado_final['pob_km'].min(), vmax=df_resultado_final['pob_km'].max()))
+sm._A = []
+cbar = plt.colorbar(sm, ax=ax)
+cbar.set_label('Población (millones)', fontsize=12)
+
+# Añadir nombres de localidades con fuente más pequeña
+for idx, row in df_resultado_final.iterrows():
+    ax.annotate(text=row['munnombre'], xy=(row['geometry'].centroid.x, row['geometry'].centroid.y), fontsize=8, color='black', ha='center')
+
+plt.show()
+##fin
+
