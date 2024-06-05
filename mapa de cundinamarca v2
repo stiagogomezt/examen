@@ -7,3 +7,40 @@ gdf_municipios.head()
 #importar el archivo csc de poblacion del DANE para municipio 25
 gdf_poblacion = pd.read_csv("densidad.csv")
 gdf_poblacion.head()
+grupos =gdf_poblacion.groupby('cod_municipio')
+grupos.head()
+total_poblacion_municipios = grupos["pob_km"].sum()
+print(total_poblacion_municipios)
+df_poblacion_municipios = total_poblacion_municipios.reset_index()
+df_poblacion_municipios
+# se estandariza la informacion de las columnas para que coincidan los merges, asi todo quedara con mayusculas y espacios
+import re
+
+def replace_accents(input_str):
+    replacements = {
+        'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u'
+    }
+
+    # Reemplaza los caracteres acentuados
+    for accented_char, unaccented_char in replacements.items():
+        input_str = input_str.replace(accented_char, unaccented_char)
+
+    # Si no hay espacios entre las palabras, añade espacios después de cada palabra
+    if not re.search(r'(?<=\w)[aeiouáéíóú]', input_str):
+        input_str = re.sub(r'(?<=\w)(?=[aeiouáéíóú])', ' ', input_str)
+
+    input_str = input_str.upper()
+    return input_str
+
+# Aplicar la función a la columna 'munnombre'
+gdf_municipios['munnombre'] = gdf_municipios['munnombre'].apply(replace_accents)
+
+print(gdf_municipios)
+import pandas as pd
+!pip install contextily
+import contextily as ctx
+import matplotlib.pyplot as plt
+df_resultado_final = gdf_municipios.merge(df_poblacion_municipios, left_on='munnombre', right_on='cod_municipio', how='inner')
+
+
+df_resultado_final.head()
