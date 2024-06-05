@@ -1,0 +1,9 @@
+import geopandas as gpd
+!pip install pandas
+import pandas as pd
+#buscar la base de datos geojson de cundinamarca https://bogota-laburbano.opendatasoft.com/explore/dataset/municipio25/export/?flg=es e importarla
+gdf_municipios = gpd.read_file("municipio25.geojson")
+gdf_municipios.head()
+#importar el archivo csc de poblacion del DANE para municipio 25
+gdf_poblacion = pd.read_csv("densidad.csv")
+gdf_poblacion.head()
