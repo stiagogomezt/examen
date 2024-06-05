@@ -1,0 +1,8 @@
+import geopandas as gpd
+gdf_tolima = gpd.read_file("5.json")
+gdf_tolima
+gdf_tolima.to_crs(epsg=9377, inplace=True)
+gdf_tolima
+gdf_tolima["area"]= gdf_tolima.area/1000000
+
+gdf_tolima.centroid
